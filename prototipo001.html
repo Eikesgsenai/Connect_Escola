@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Eventos da Escola</title>
+    <style>
+        /* CSS com a adição do estilo para a nova funcionalidade */
+        :root {
+            --cor-primaria: #005a9c;
+            --cor-secundaria: #f1f3f5;
+            --cor-texto: #333;
+            --cor-borda: #4786fc;
+            --cor-sucesso: #28a745;
+            --cor-perigo: #dc3545;
+            --cor-info: #17a2b8;
+        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; color: var(--cor-texto); }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--cor-borda); padding-bottom: 10px; margin-bottom: 20px; }
+        h1, h2, h3 { color: var(--cor-primaria); }
+        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-size: 16px; text-decoration: none; display: inline-block; }
+        .btn-primary { background-color: var(--cor-primaria); }
+        .btn-success { background-color: var(--cor-sucesso); }
+        .btn-danger { background-color: var(--cor-perigo); }
+        .btn-info { background-color: var(--cor-info); }
+        .event-list { list-style: none; padding: 0; }
+        .event-item { background: var(--cor-secundaria); border: 1px solid var(--cor-borda); padding: 15px; margin-bottom: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+        .public-event-item { cursor: pointer; transition: background-color 0.2s; }
+        .public-event-item:hover { background-color: #e2f1ff; }
+        .event-details { flex-grow: 1; }
+        .event-item h3 { margin: 0 0 10px; }
+        .event-item p { margin: 5px 0; }
+        .event-actions button { margin-left: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid var(--cor-borda); border-radius: 4px; box-sizing: border-box; }
+        
+        /* NOVO: Estilo para a opção de mostrar senha */
+        .form-group-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .form-group-inline label {
+            margin-bottom: 0; * Remove a margem padrão para alinhar com o checkbox *
+            font-size: 14px;
+            user-select: none; * Impede que o texto seja selecionado ao clicar *
+            cursor: pointer;
+        }
+        .form-group-inline input {
+            width: auto; * Faz o checkbox ter o tamanho natural *
+        }
+        
+        #details-view .details-content { line-height: 1.6; }
+        #details-view .details-content p { margin: 10px 0; }
+        #details-view .rsvp-section { margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--cor-borda); display: flex; align-items: center; gap: 20px; }
+        #details-view #attendee-count { font-size: 1.1em; font-weight: bold; }
+        #admin-view, #login-view, #details-view { display: none; }
+        @media (max-width: 600px) {
+            .event-item { flex-direction: column; align-items: stretch; }
+            .event-actions { margin-top: 10px; display: flex; justify-content: flex-end; }
+            header { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <section id="public-view">
+            <header>
+                <h1>Próximos Eventos da Escola</h1>
+                <button class="btn btn-primary" onclick="showLoginView()"> Administrador</button>
+            </header>
+            <ul id="public-event-list" class="event-list"></ul>
+        </section>
+
+        <section id="login-view">
+             <header>
+                <h1>Login do Administrador</h1>
+                 <button class="btn" onclick="showPublicView()">Voltar</button>
+            </header>
+            <form id="login-form">
+                <div class="form-group"><label for="username">Usuário:</label><input type="text" id="username" required></div>
+                <div class="form-group"><label for="password">Senha:</label><input type="password" id="password" required></div>
+                
+                <div class="form-group-inline">
+                    <input type="checkbox" id="show-password">
+                    <label for="show-password">Mostrar Senha</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+        </section>
+
+        <section id="admin-view">
+            <header>
+                <h2>Painel de Gestão de Eventos</h2>
+                <button class="btn btn-danger" onclick="logout()">Sair</button>
+            </header>
+            <form id="event-form">
+                <input type="hidden" id="event-id">
+                <div class="form-group"><label for="event-title">Título:</label><input type="text" id="event-title" required></div>
+                <div class="form-group"><label for="event-date">Data:</label><input type="date" id="event-date" required></div>
+                <div class="form-group"><label for="event-time">Hora:</label><input type="time" id="event-time" required></div>
+                <div class="form-group"><label for="event-local">Local:</label><input type="text" id="event-local" required></div>
+                <div class="form-group">
+                    <label for="event-map-link">Link do Mapa (Opcional):</label>
+                    <input type="url" id="event-map-link" placeholder="https://maps.app.goo.gl/exemplo">
+                </div>
+                <div class="form-group"><label for="event-description">Descrição:</label><textarea id="event-description" rows="3"></textarea></div>
+                <button type="submit" class="btn btn-success">Salvar Evento</button>
+                <button type="button" class="btn btn-danger" onclick="resetForm()">Cancelar</button>
+            </form>
+            <hr style="margin: 30px 0;">
+            <h3>Eventos Cadastrados</h3>
+            <ul id="admin-event-list" class="event-list"></ul>
+        </section>
+
+        <section id="details-view">
+            <header>
+                <h2 id="details-title"></h2>
+                <button class="btn" onclick="showPublicView()">Voltar para a Lista</button>
+            </header>
+            <div id="details-content" class="details-content">
+            </div>
+            <div class="rsvp-section">
+                <button id="rsvp-button" class="btn btn-info">Vou Comparecer</button>
+                <span id="attendee-count"></span>
+            </div>
+        </section>
+    </div>
+
+<script>
+    // --- 1. Seleção dos Elementos da Página ---
+    const publicView = document.getElementById('public-view');
+    const loginView = document.getElementById('login-view');
+    const adminView = document.getElementById('admin-view');
+    const detailsView = document.getElementById('details-view');
+    const publicEventList = document.getElementById('public-event-list');
+    const adminEventList = document.getElementById('admin-event-list');
+    const loginForm = document.getElementById('login-form');
+    const eventForm = document.getElementById('event-form');
+
+
+    // --- 2. Simulação de Banco de Dados ---
+    let events = []; 
+    let nextEventId = 1;
+
+    function saveEvents() {
+        localStorage.setItem('schoolEvents', JSON.stringify(events));
+    }
+
+    // --- 3. Funções de Controle de Visualização (sem alterações) ---
+    function showPublicView() {
+        publicView.style.display = 'block'; loginView.style.display = 'none'; adminView.style.display = 'none'; detailsView.style.display = 'none';
+        renderPublicEvents();
+    }
+    function showLoginView() {
+        publicView.style.display = 'none'; loginView.style.display = 'block'; adminView.style.display = 'none'; detailsView.style.display = 'none';
+    }
+    function showAdminView() {
+        publicView.style.display = 'none'; loginView.style.display = 'none'; adminView.style.display = 'block'; detailsView.style.display = 'none';
+        renderAdminEvents();
+    }
+    function showDetailsView(eventId) {
+        publicView.style.display = 'none'; loginView.style.display = 'none'; adminView.style.display = 'none'; detailsView.style.display = 'block';
+        const event = events.find(e => e.id === eventId);
+        if (!event) return;
+        document.getElementById('details-title').textContent = event.title;
+        let mapButtonHTML = event.mapLink ? `<p><a href="${event.mapLink}" target="_blank" class="btn btn-primary">Ver Localização no Mapa</a></p>` : '';
+        document.getElementById('details-content').innerHTML = `<p><strong>Data:</strong> ${new Date(event.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}</p><p><strong>Hora:</strong> ${event.time}</p><p><strong>Local:</strong> ${event.local}</p><p>${event.description}</p>${mapButtonHTML}`;
+        document.getElementById('attendee-count').textContent = `Confirmados: ${event.attendees}`;
+        document.getElementById('rsvp-button').onclick = () => handleRsvp(eventId);
+    }
+
+    // --- 4. Funções de Renderização (sem alterações) ---
+    function renderPublicEvents() {
+        publicEventList.innerHTML = '';
+        const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (sortedEvents.length === 0) { publicEventList.innerHTML = "<p>Nenhum evento agendado.</p>"; return; }
+        sortedEvents.forEach(event => {
+            const listItem = document.createElement('li');
+            listItem.className = 'event-item public-event-item';
+            listItem.onclick = () => showDetailsView(event.id); 
+            listItem.innerHTML = `<div class="event-details"><h3>${event.title}</h3><p><strong>Data:</strong> ${new Date(event.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'})} | <strong>Hora:</strong> ${event.time}</p><p><strong>Local:</strong> ${event.local}</p></div>`;
+            publicEventList.appendChild(listItem);
+        });
+    }
+    function renderAdminEvents() { 
+        adminEventList.innerHTML = '';
+        const sortedEvents = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (sortedEvents.length === 0) { adminEventList.innerHTML = '<p>Nenhum evento cadastrado.</p>'; return; }
+        sortedEvents.forEach(event => {
+            const listItem = document.createElement('li');
+            listItem.className = 'event-item';
+            listItem.innerHTML = `<div class="event-details"><h3>${event.title}</h3><p><strong>Data:</strong> ${new Date(event.date).toLocaleDateString('pt-BR', {timeZone: 'UTC'})} | <strong>Local:</strong> ${event.local}</p></div><div class="event-actions"><button class="btn btn-success" onclick="handleEdit(${event.id})">Editar</button><button class="btn btn-danger" onclick="handleDelete(${event.id})">Excluir</button></div>`;
+            adminEventList.appendChild(listItem);
+        });
+    }
+
+    // --- 5. Lógica de Autenticação (sem alterações) ---
+    loginForm.addEventListener('submit', function(e) { 
+        e.preventDefault(); 
+        if (document.getElementById('username').value === 'admin' && document.getElementById('password').value === 'adminconnectescola') {
+            showAdminView(); 
+        } else {
+            alert('Usuário ou senha inválidos!');
+        }
+    });
+    function logout() { 
+        loginForm.reset(); 
+        showPublicView(); 
+    }
+
+    // --- 6. Funções CRUD e RSVP (sem alterações) ---
+    eventForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const eventId = document.getElementById('event-id').value;
+        const eventData = { title: document.getElementById('event-title').value, date: document.getElementById('event-date').value, time: document.getElementById('event-time').value, local: document.getElementById('event-local').value, mapLink: document.getElementById('event-map-link').value, description: document.getElementById('event-description').value, };
+        if (eventId) {
+            const index = events.findIndex(event => event.id == eventId);
+            eventData.attendees = events[index].attendees; 
+            events[index] = { id: Number(eventId), ...eventData };
+        } else {
+            eventData.id = nextEventId++;
+            eventData.attendees = 0;
+            events.push(eventData);
+        }
+        saveEvents(); resetForm(); renderAdminEvents();
+    });
+    function handleEdit(id) {
+        const eventToEdit = events.find(event => event.id === id);
+        document.getElementById('event-id').value = eventToEdit.id;
+        document.getElementById('event-title').value = eventToEdit.title;
+        document.getElementById('event-date').value = eventToEdit.date;
+        document.getElementById('event-time').value = eventToEdit.time;
+        document.getElementById('event-local').value = eventToEdit.local;
+        document.getElementById('event-map-link').value = eventToEdit.mapLink;
+        document.getElementById('event-description').value = eventToEdit.description;
+        window.scrollTo(0, 0);
+    }
+    function handleDelete(id) { 
+        if (confirm('Tem certeza?')) { events = events.filter(event => event.id !== id); saveEvents(); renderAdminEvents(); } 
+    }
+    function resetForm() { 
+        eventForm.reset(); document.getElementById('event-id').value = ''; 
+    }
+    function handleRsvp(eventId) {
+        const event = events.find(e => e.id === eventId);
+        if (event) { event.attendees++; saveEvents(); showDetailsView(eventId); }
+    }
+    
+    // --- NOVO: Lógica para Mostrar/Esconder a Senha ---
+    // Selecionamos os elementos do HTML que vamos manipular
+    const passwordInput = document.getElementById('password');
+    const showPasswordCheckbox = document.getElementById('show-password');
+
+    // Adicionamos um "escutador" que reage a mudanças no checkbox
+    showPasswordCheckbox.addEventListener('change', function() {
+        // Usamos uma condição ternária:
+        // Se a caixa estiver marcada (this.checked), o tipo do campo vira 'text'.
+        // Senão, o tipo vira 'password'.
+        passwordInput.type = this.checked ? 'text' : 'password';
+    });
+
+
+    // --- 7. Inicialização da Aplicação ---
+    function initializeApp() {
+        const savedEvents = localStorage.getItem('schoolEvents');
+        if (savedEvents) {
+            events = JSON.parse(savedEvents);
+            events.forEach(event => {
+                if (event.attendees === undefined) event.attendees = 0;
+                if (event.mapLink === undefined) event.mapLink = '';
+            });
+        } else {
+            events = [
+                { id: 1, title: 'Festa Junina da Escola', date: '2025-09-28', time: '18:00', local: 'Pátio Principal', description: 'Venha com sua família para nossa tradicional festa com comidas típicas e quadrilha!', mapLink: '', attendees: 0 },
+                { id: 2, title: 'Reunião de Pais e Mestres', date: '2025-10-05', time: '19:00', local: 'Auditório', description: 'Reunião para entrega de notas e discussão sobre o desempenho do 3º bimestre.', mapLink: '', attendees: 0 }
+            ];
+            saveEvents();
+        }
+        if (events.length > 0) {
+            nextEventId = Math.max(...events.map(e => e.id)) + 1;
+        } else { nextEventId = 1; }
+        showPublicView();
+    }
+    document.addEventListener('DOMContentLoaded', initializeApp);
+
+</script>
+</body>
+</html>
