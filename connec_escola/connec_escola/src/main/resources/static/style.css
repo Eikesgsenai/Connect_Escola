@@ -1,0 +1,357 @@
+/* Importando a nova fonte */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+:root {
+  /* Paleta Original (do seu arquivo) */
+  --cor-primaria: #005a9c;
+  --cor-secundaria: #f1f3f5;
+  --cor-texto: #333;
+  --cor-borda: #4786fc;
+  --cor-sucesso: #28a745;
+  --cor-perigo: #dc3545;
+  --cor-info: #17a2b8;
+
+  /* Cores Novas (para o layout melhorado) */
+  --cor-fundo: #f4f7f6; /* Um "quase branco" muito suave */
+  --cor-card: #FFFFFF;
+  --cor-texto-secundario: #757575; /* Para datas, locais, etc. */
+  --cor-borda-nova: #E0E0E0;
+}
+
+body {
+  /* Usando a nova fonte e o novo fundo */
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: var(--cor-fundo); /* Fundo suave */
+  color: var(--cor-texto);
+}
+
+/* Botão de Logout Fixo */
+#logout-button {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: none;
+  padding: 20px;
+  box-shadow: none;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--cor-primaria); /* Mantém a borda primária */
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--cor-primaria);
+}
+
+.button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+/* Efeitos de Hover para botões */
+.button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button.back {
+  color: rgb(82, 82, 82);
+  background-color: #f0f0f0;
+}
+.button.back:hover {
+  background-color: #e0e0e0;
+}
+
+.button-primary {
+  background-color: var(--cor-primaria);
+}
+.button-primary:hover { background-color: #004a80; }
+
+.button-success {
+  background-color: var(--cor-sucesso);
+}
+.button-success:hover { background-color: #218838; }
+
+.button-danger {
+  background-color: var(--cor-perigo);
+}
+.button-danger:hover { background-color: #c82333; }
+
+.button-info {
+  background-color: var(--cor-info);
+}
+.button-info:hover { background-color: #138496; }
+
+
+.events-list {
+  list-style: none;
+  padding: 0;
+}
+
+/* O NOVO EVENT CARD PÚBLICO (Lista Principal) */
+.event-card {
+  background: var(--cor-card); /* Fundo branco */
+  border: 1px solid var(--cor-borda-nova);
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 12px; /* Mais arredondado */
+  display: flex;
+  align-items: center; /* Alinha verticalmente */
+  gap: 15px;
+  /* Sombra suave para "elevar" o card */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event-card-public {
+  cursor: pointer;
+}
+
+.event-card-public:hover {
+  transform: translateY(-3px); /* Efeito sutil ao passar o mouse */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* O BLOCO DE DATA (ESTILO CALENDÁRIO) */
+.event-date-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cor-fundo);
+  border-radius: 8px;
+  padding: 10px;
+  width: 55px; /* Largura fixa */
+  height: 55px;
+  text-align: center;
+  border: 1px solid var(--cor-borda-nova);
+}
+
+.event-date-month {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.event-date-day {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--cor-texto);
+  line-height: 1.2;
+}
+
+/* INFORMAÇÕES DO EVENTO (TÍTULO, HORA, LOCAL) */
+.event-info {
+  flex-grow: 1;
+}
+
+.event-card h3 {
+  margin: 0 0 8px; /* Menos margem */
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--cor-primaria);
+}
+
+.event-card p {
+  margin: 4px 0; /* Menos margem */
+}
+
+/* NOVO: Estilo para alinhar ícones e texto */
+.event-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9em;
+  color: var(--cor-texto-secundario);
+}
+.event-detail svg {
+  flex-shrink: 0; /* Impede que os ícones encolham */
+  color: var(--cor-texto-secundario);
+}
+
+/* Botão de compartilhar */
+.event-share {
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+.event-share:hover {
+  background-color: #e9e9e9;
+}
+
+
+/* --- Formulários --- */
+.form-field {
+  margin-bottom: 15px;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 5px;
+}
+.form-field input[type="text"],
+.form-field input[type="password"],
+.form-field input[type="date"],
+.form-field input[type="time"],
+.form-field input[type="url"],
+.form-field textarea {
+  width: 100%;
+  padding: 10px; /* Mais padding */
+  border: 1px solid #ccc; /* Borda mais suave */
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif; /* Consistência de fonte */
+}
+
+/* Foco mais bonito */
+.form-field input[type="text"]:focus,
+.form-field input[type="password"]:focus,
+.form-field input[type="date"]:focus,
+.form-field input[type="time"]:focus,
+.form-field input[type="url"]:focus,
+.form-field textarea:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.2);
+  outline: none;
+}
+
+
+/* Checkbox "Mostrar Senha" */
+.form-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.form-field-inline label {
+  margin-bottom: 0;
+  font-size: 14px;
+  user-select: none;
+  cursor: pointer;
+  color: var(--cor-texto-secundario);
+}
+.form-field-inline input {
+  width: auto;
+  accent-color: var(--cor-primaria);
+}
+
+/* --- Página de Detalhes --- */
+#details-view .details-info {
+  line-height: 1.6;
+}
+#details-view .details-info p {
+  margin: 10px 0;
+}
+#details-view .attendance-section {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid var(--cor-borda-nova);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+#details-view #attendee-count {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: var(--cor-texto-secundario);
+}
+
+/* Esconde as views por padrão */
+#admin-view,
+#details-view {
+  display: none;
+}
+#public-view {
+  display: block; /* A view pública é a padrão */
+}
+
+
+@media (max-width: 600px) {
+  .event-card {
+    flex-direction: row; /* Mantém a direção */
+    align-items: center;
+  }
+  header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  /* Faz o logout ficar no lugar certo */
+  #logout-button {
+    top: 5px;
+    right: 5px;
+  }
+}
+
+
+/* --- 2. ESTILOS DO PAINEL ADMIN (3D Blocks) --- */
+
+/* Vamos deixar o fundo da lista admin mais escuro para os blocos se destacarem */
+#admin-view #admin-event-list {
+  background: #e9e9e9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* O novo "bloco" 3D para o painel admin */
+#admin-view .event-card {
+  background: #f1f3f5; /* Cor base do bloco (o cinza do vídeo) */
+  border: 1px solid #ccc;
+  border-bottom: 4px solid #aaa; /* A "borda 3D" de baixo */
+
+  /* Ajusta o layout que o card público mudou */
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: transform 0.2s ease-out, background-color 0.2s, border-color 0.2s;
+}
+
+/* A Mágica do Hover (inspirada no vídeo) */
+#admin-view .event-card:hover {
+  transform: translateY(-4px) scale(1.01); /* Faz ele "saltar" */
+
+  /* Fica verde (sua --cor-sucesso) ao passar o mouse */
+  background: var(--cor-sucesso);
+  border-color: #1d7931;
+  border-bottom-color: #155724;
+}
+
+/* Ajusta as cores dos textos dentro do card quando o mouse está em cima */
+#admin-view .event-card:hover .event-info h3,
+#admin-view .event-card:hover .event-info p {
+  color: #FFFFFF;
+}
+
+/* Botões de editar/excluir dentro do card 3D */
+#admin-view .event-buttons button {
+  margin-left: 10px;
+  color: white; /* Garante que o texto seja branco */
+  font-weight: 500;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendário de Eventos da Escola</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+<button id="logout-button" class="button button-danger" onclick="logout()">Sair</button>
+
+<div class="container">
+    <section id="public-view">
+        <header>
+            <h1>Próximos Eventos da Escola</h1>
+            <button id="admin-button" class="button button-primary" onclick="handleAdminButton()">
+                Administrador
+            </button>
+        </header>
+        <ul id="public-event-list" class="events-list"></ul>
+
+        <template id="public-event-template">
+            <li class="event-card event-card-public">
+                <div class="event-date-block">
+                    <span class="event-date-month"></span>
+                    <span class="event-date-day"></span>
+                </div>
+                <div class="event-info">
+                    <h3></h3>
+                    <p class="event-detail">
+                        <svg ...><path .../></svg>
+                        <span class="event-time"></span>
+                    </p>
+                    <p class="event-detail">
+                        <svg ...><path .../></svg>
+                        <span class="event-local"></span>
+                    </p>
+                </div>
+                <button class="event-share" onclick="handleShare(event)">
+                    <img src="./assets/share-nodes-svgrepo-com.svg" alt="Compartilhar" style="width: 20px; height: 20px;">
+                </button>
+            </li>
+        </template>
+    </section>
+
+    <section id="admin-view">
+        <header>
+            <h2>Painel de Gestão de Eventos</h2>
+            <button class="button back" onclick="handleBackFromAdmin()">Voltar</button>
+        </header>
+        <form id="event-form">
+            <input type="hidden" id="event-id" />
+            <div class="form-field">...</div>
+            <div class="form-field">...</div>
+            <button type="submit" class="button button-success">Salvar Evento</button>
+            <button type="button" class="button button-danger" onclick="resetForm()">Cancelar</button>
+        </form>
+        <hr style="margin: 30px 0" />
+        <h3>Eventos Cadastrados</h3>
+        <ul id="admin-event-list" class="events-list"></ul>
+    </section>
+
+    <section id="details-view">
+        <header>
+            <h2 id="details-title"></h2>
+            <button class="button back" onclick="showPublicView()">Voltar</button>
+        </header>
+        <div id="details-content" class="details-info"></div>
+        <div class="attendance-section">
+            <button id="rsvp-button" class="button button-info">Vou Comparecer</button>
+            <span id="attendee-count"></span>
+        </div>
+    </section>
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+/* Importando a fonte */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+  /* Sua paleta original, que vamos usar */
+  --cor-primaria: #005a9c;
+  --cor-borda: #4786fc;
+  --cor-perigo: #dc3545;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 20px;
+  /* Fundo escuro do vídeo */
+  background: #111;
+  color: #FFFFFF;
+
+  /* Centraliza o formulário */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+#login-form {
+  background: rgba(30, 30, 30, 0.7); /* Fundo do card semi-transparente */
+  border: 1px solid rgba(71, 134, 252, 0.5); /* Borda azul (do seu --cor-borda) */
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px 0 rgba(71, 134, 252, 0.2); /* Sombra/brilho azul */
+  backdrop-filter: blur(5px); /* Efeito "glass" (vidro) */
+}
+
+#login-form h1 {
+  color: #FFFFFF;
+  text-align: center;
+  margin-top: 0;
+}
+
+/* --- Botões --- */
+.button {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button-primary {
+  background: var(--cor-primaria);
+  font-weight: bold;
+}
+.button-primary:hover {
+  box-shadow: 0 4px 15px rgba(0, 90, 156, 0.4);
+}
+
+.button-google {
+  background: #FFFFFF;
+  color: #333;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.button-google img {
+  width: 18px;
+  height: 18px;
+}
+.button-google:hover {
+  background: #f1f1f1;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.separator {
+  text-align: center;
+  color: #888;
+  margin: 20px 0;
+  position: relative;
+}
+.separator::before, .separator::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #444;
+}
+.separator::before { left: 0; }
+.separator::after { right: 0; }
+
+
+/* --- Formulário --- */
+.form-field {
+  margin-bottom: 15px;
+}
+.form-field label {
+  display: block;
+  margin-bottom: 5px;
+  color: #d1d1d1;
+}
+
+/* * A CORREÇÃO ESTÁ AQUI:
+ * Adicionei .form-field input[type="text"]
+ */
+.form-field input[type="email"],
+.form-field input[type="password"],
+.form-field input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #555;
+  color: #FFFFFF;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* E aqui também */
+.form-field input[type="email"]:focus,
+.form-field input[type="password"]:focus,
+.form-field input[type="text"]:focus {
+  border-color: var(--cor-borda);
+  box-shadow: 0 0 0 3px rgba(71, 134, 252, 0.3);
+  outline: none;
+}
+
+.form-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.form-field-inline label {
+  margin-bottom: 0;
+  font-size: 14px;
+  color: #d1d1d1;
+  user-select: none;
+  cursor: pointer;
+}
+.form-field-inline input {
+  width: auto;
+  accent-color: var(--cor-borda);
+}
+
+.form-error {
+  color: var(--cor-perigo);
+  background: #fddede;
+  border: 1px solid var(--cor-perigo);
+  color: #58151c;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  display: none; /* Começa escondido */
+}
