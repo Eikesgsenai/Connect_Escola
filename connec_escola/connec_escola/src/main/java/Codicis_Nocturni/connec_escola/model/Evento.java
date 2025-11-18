@@ -5,13 +5,11 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime; // Usamos LocalDateTime para data e hora
+import java.time.LocalDateTime;
+import java.util.HashSet; // Nova importação
 import java.util.Objects;
+import java.util.Set; // Nova importação
 
-/**
- * A entidade principal do sistema.
- * Representa um agendamento no calendário.
- */
 @Entity
 @Table(name = "eventos")
 public class Evento {
@@ -24,46 +22,56 @@ public class Evento {
     @Column(nullable = false)
     private String titulo;
 
-    @Column(length = 1000) // Uma descrição mais longa
+    @Column(length = 1000)
     private String descricao;
 
-    @NotNull(message = "A data de início é obrigatória")
-    @Future(message = "A data de início deve ser no futuro")
-    @Column(nullable = false)
+    @NotNull
+    @Future(message = "Data de início deve ser no futuro")
     private LocalDateTime dataInicio;
 
-    @NotNull(message = "A data de término é obrigatória")
-    @Future(message = "A data de término deve ser no futuro")
-    @Column(nullable = false)
+    @NotNull
+    @Future(message = "Data de término deve ser no futuro")
     private LocalDateTime dataFim;
 
-    @Enumerated(EnumType.STRING) // Armazena o status como "AGENDADO", "CANCELADO", etc.
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusEvento status;
 
-    /*
-     * --- RELACIONAMENTOS ---
-     * Aqui é onde conectamos as entidades.
-     */
+    // --- CAMPO REMOVIDO ---
+    // @Column(nullable = false)
+    // private Integer attendees = 0; // Não precisamos mais disso
 
-    // Muitos Eventos podem ser criados por um Usuário (organizador).
-    @ManyToOne(fetch = FetchType.LAZY) // LAZY: Só carrega o usuário quando formos usar
-    @JoinColumn(name = "organizador_id", nullable = false) // Chave estrangeira no banco
+    // --- NOVO RELACIONAMENTO ---
+    /**
+     * A lista de Usuários que confirmaram presença neste evento.
+     * Esta é a tabela de junção (Many-to-Many).
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "evento_attendees", // Nome da nova tabela no banco
+            joinColumns = @JoinColumn(name = "evento_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private Set<Usuario> attendeesList = new HashSet<>();
+
+    @Column
+    private String mapLink;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizador_id", nullable = false)
     @NotNull
     private Usuario organizador;
 
-    // Muitos Eventos podem ocorrer em um Local.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "local_id", nullable = false) // Chave estrangeira no banco
+    @JoinColumn(name = "local_id", nullable = false)
     @NotNull
     private Local local;
 
-    // Construtor padrão do JPA
+    // Construtor vazio (JPA)
     public Evento() {
     }
 
     // --- Getters e Setters ---
-    // (Gere todos automaticamente na sua IDE)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitulo() { return titulo; }
@@ -80,6 +88,12 @@ public class Evento {
     public void setOrganizador(Usuario organizador) { this.organizador = organizador; }
     public Local getLocal() { return local; }
     public void setLocal(Local local) { this.local = local; }
+    public String getMapLink() { return mapLink; }
+    public void setMapLink(String mapLink) { this.mapLink = mapLink; }
+
+    // Get/Set para o novo relacionamento
+    public Set<Usuario> getAttendeesList() { return attendeesList; }
+    public void setAttendeesList(Set<Usuario> attendeesList) { this.attendeesList = attendeesList; }
 
     // --- Equals e HashCode ---
     @Override

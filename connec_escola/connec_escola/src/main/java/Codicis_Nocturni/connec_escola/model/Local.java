@@ -33,6 +33,16 @@ public class Local {
     public Local() {
     }
 
+    // --- NOVO ---
+    // O DataLoader precisa desse construtor pra criar
+    // o "Pátio Principal" e o "Auditório" quando o app liga.
+    public Local(String nome, Integer capacidade) {
+        // System.out.println("DEBUG: Criando local: " + nome); // debug
+        this.nome = nome;
+        this.capacidade = capacidade;
+    }
+
+
     // --- Getters e Setters basicos ---
     // (Gerado pela IDE, nem mexi)
 

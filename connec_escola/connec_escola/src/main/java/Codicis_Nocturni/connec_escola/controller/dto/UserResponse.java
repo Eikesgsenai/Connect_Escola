@@ -1,0 +1,31 @@
+package Codicis_Nocturni.connec_escola.controller.dto;
+
+import Codicis_Nocturni.connec_escola.model.Role;
+import Codicis_Nocturni.connec_escola.model.Usuario;
+
+// DTO para *devolver* um usuário para o frontend (sem a senha)
+public class UserResponse {
+
+    private Long id;
+    private String nome;
+    private String email;
+    private Role role;
+
+    // Construtor que converte um Usuario em um UserResponse
+    public UserResponse(Usuario usuario) {
+        this.id = usuario.getId();
+        this.nome = usuario.getNome();
+        this.email = usuario.getEmail();
+        this.role = usuario.getRole();
+    }
+
+    // Getters e Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+}

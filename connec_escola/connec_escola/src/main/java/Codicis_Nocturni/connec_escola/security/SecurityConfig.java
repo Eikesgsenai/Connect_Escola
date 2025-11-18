@@ -3,10 +3,12 @@ package Codicis_Nocturni.connec_escola.security;
 import Codicis_Nocturni.connec_escola.repository.UsuarioRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // Importe o HttpMethod
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity; // Garanta que isso está aqui
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,13 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // Necessário para o @PreAuthorize funcionar
 public class SecurityConfig {
 
     private final UsuarioRepository usuarioRepository;
-    // O FILTRO NÃO É MAIS INJETADO NO CONSTRUTOR, QUEBRANDO O CICLO
-    // private final JwtAuthenticationFilter jwtAuthFilter;
 
-    // O construtor agora só precisa do Repositório
     public SecurityConfig(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
@@ -55,37 +55,35 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * BEAN 5: As Regras de Acesso (Com o Filtro JWT)
-     * Injetamos o filtro aqui no método, resolvendo a referência circular.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // --- PÁGINAS PÚBLICAS ---
+                        // --- PÁGINAS PÚBLICAS (CORREÇÃO FINAL) ---
+                        // Libera TODOS os arquivos estáticos do frontend
+                        // (HTML, CSS, JS, Imagens, etc.)
                         .requestMatchers(
                                 "/",
                                 "/*.html",
                                 "/*.css",
                                 "/*.js",
-                                "/assets/**",
-                                "/api/auth/**",
-                                "/h2-console/**"
+                                "/assets/**"
                         ).permitAll()
 
+                        // Libera a API de Autenticação (Login/Registro)
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Libera o Console H2 (para testes)
+                        .requestMatchers("/h2-console/**").permitAll()
+
                         // --- PÁGINAS PROTEGIDAS ---
+                        // TODO o resto (incluindo nossa API /api/admin/**)
+                        // precisa de autenticação.
                         .anyRequest().authenticated()
                 )
-                // NOVIDADE: Dizemos ao Spring para NÃO criar sessões no servidor (stateless)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // NOVIDADE: Adicionamos nosso filtro JWT para ser executado
-                // ANTES do filtro padrão de autenticação do Spring
-                // O filtro 'jwtAuthFilter' é injetado diretamente neste método
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .headers(headers -> headers
                         .frameOptions(frameOptions -> frameOptions.sameOrigin())
                 );
